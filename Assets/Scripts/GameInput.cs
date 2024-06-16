@@ -11,6 +11,7 @@ public class GameInput : MonoBehaviour {
     private void Awake() {
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
+
     }
 
     public Vector2 GetMovementVectorNormalized() {

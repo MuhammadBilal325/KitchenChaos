@@ -3,13 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CuttingCounter : BaseCounter {
+public class CuttingCounter : BaseCounter,IHasProgress {
 
-    public event EventHandler<OnProgressChangedEventArgs> OnProgressChanged;
+    public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
     public event EventHandler OnCut;
-    public class OnProgressChangedEventArgs : EventArgs {
-        public float progressNormalized;
-    }
     [SerializeField] private CuttingRecipeSO[] cuttingRecipeSOArray;
     private int cuttingProgress;
     public override void Interact(Player player) {
@@ -18,10 +15,10 @@ public class CuttingCounter : BaseCounter {
             if (GetOutputForInput(player.GetKitchenObject().GetKitchenObjectSO()) != null) {
                 player.GetKitchenObject().SetKitchenObjectParent(this);
                 cuttingProgress = 0;
-                OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs { progressNormalized = 0 });
+                OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs { progressNormalized = 0 });
             }
         }
-        else if (!player.HasKitchenObject()) {
+        else if (!player.HasKitchenObject() && HasKitchenObject()) {
             //player has no kitchen object and counter has object
             GetKitchenObject().SetKitchenObjectParent(player);
         }
@@ -36,12 +33,12 @@ public class CuttingCounter : BaseCounter {
             OnCut?.Invoke(this, EventArgs.Empty);
             cuttingProgress++;
             CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectSO());
-            OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs { progressNormalized = (float)cuttingProgress / cuttingRecipeSO.cuttingProgressMax });
+            OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs { progressNormalized = (float)cuttingProgress / cuttingRecipeSO.cuttingProgressMax });
             if (cuttingProgress >= cuttingRecipeSO.cuttingProgressMax) {
                 GetKitchenObject().DestroySelf();
                 KitchenObject.SpawnKitchenObject(outputKitchenObjectSO, this);
                 cuttingProgress = 0;
-                OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs { progressNormalized = 0 });
+                OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs { progressNormalized = 0 });
             }
         }
     }

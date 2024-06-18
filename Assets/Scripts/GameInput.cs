@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameInput : MonoBehaviour {
 
     public event EventHandler OnInteractAction;
-
+    public event EventHandler OnAlternateInteractAction;
     private PlayerInputActions playerInputActions;
 
 
@@ -14,6 +14,11 @@ public class GameInput : MonoBehaviour {
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
         playerInputActions.Player.Interact.performed += Interact_performed;
+        playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
+    }
+
+    private void InteractAlternate_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        OnAlternateInteractAction?.Invoke(this,EventArgs.Empty);
     }
 
     private void Interact_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {

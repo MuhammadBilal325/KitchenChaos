@@ -1,15 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ClearCounter : BaseCounter {
 
-
+   
     public override void Interact(Player player) {
         if (!HasKitchenObject()) {
             if (player.HasKitchenObject()) {
                 //player has kitchen object and counter is empty
                 player.GetKitchenObject().SetKitchenObjectParent(this);
+
             }
         }
         else {

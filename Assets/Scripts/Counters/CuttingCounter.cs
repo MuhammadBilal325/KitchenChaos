@@ -18,9 +18,18 @@ public class CuttingCounter : BaseCounter,IHasProgress {
                 OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs { progressNormalized = 0 });
             }
         }
-        else if (!player.HasKitchenObject() && HasKitchenObject()) {
-            //player has no kitchen object and counter has object
-            GetKitchenObject().SetKitchenObjectParent(player);
+        else if (HasKitchenObject()) {
+            if (!player.HasKitchenObject()) {
+
+                //player has no kitchen object and counter has object
+                GetKitchenObject().SetKitchenObjectParent(player);
+            }
+            else if (player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
+                //Player is holding a plate
+                bool ingredientAdded = plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO());
+                if (ingredientAdded)
+                    GetKitchenObject().DestroySelf();
+            }
         }
     }
 
